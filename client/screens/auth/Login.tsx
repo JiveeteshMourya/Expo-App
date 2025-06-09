@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import InputBox from '@/components/forms/InputBox';
 import SubmitButton from '@/components/forms/SubmitButton';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface LoginProps {
     navigation: any,
@@ -13,7 +15,7 @@ const Login = ({navigation}: LoginProps) => {
     const [password, setPassword] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(false);
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         try {
             setLoading(true);
             if(!email || !password) {
@@ -21,13 +23,24 @@ const Login = ({navigation}: LoginProps) => {
                 setLoading(false);
                 return;
             }
+            const {data} = await axios.post('http://192.168.1.10:8080/api/v1/auth/login', {email, password}); // replace "localhost" with your ip address when using emulator (ek hi device se req aur us se hi res nhi hota)
+            await AsyncStorage.setItem("@auth", JSON.stringify(data));
+            Alert.alert(data && data.message);
             console.log("Login Data => ", {email, password});
             setLoading(false);
-        } catch(err) {
+        } catch(err: any) {
+            Alert.alert(err.response.data.message);
             setLoading(false);
             console.log(err);
         }
     }
+    
+    // temp function to check local storage data
+    const getLocalStorageData = async () => {
+        let data = await AsyncStorage.getItem('@auth');
+        console.log('Local Storage => ', data);
+    };
+    getLocalStorageData();
 
   return (
     <SafeAreaView style={styles.container}>

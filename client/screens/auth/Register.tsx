@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import InputBox from '@/components/forms/InputBox';
 import SubmitButton from '@/components/forms/SubmitButton';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type RegisterProps = {
     navigation: any,
@@ -13,7 +15,7 @@ const Register = ({navigation}: RegisterProps) => {
     const [password, setPassword] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(false);
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         try {
             setLoading(true);
             if(!name || !email || !password) {
@@ -21,9 +23,12 @@ const Register = ({navigation}: RegisterProps) => {
                 setLoading(false);
                 return;
             }
+            const {data} = await axios.post('http://192.168.1.10:8080/api/v1/auth/register', {name, email, password}); // replace "localhost" with your ip address (ek hi device se req aur us se hi res nhi hota)
+            Alert.alert(data && data.message);
             console.log("Register Data => ", {name, email, password});
             setLoading(false);
-        } catch(err) {
+        } catch(err: any) {
+            Alert.alert(err.response.data.message);
             setLoading(false);
             console.log(err);
         }
@@ -82,8 +87,9 @@ export default Register;
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        flex:1,
         backgroundColor: "#e1d5c9",
+
     },
     pageTitle: {
         fontSize: 40,
@@ -91,7 +97,7 @@ const styles = StyleSheet.create({
         textAlign: "center",
         color: "#1e2225",
         marginBottom: 20,
-        marginTop: 60,
+        marginTop: 40,
     },
     linkText: {
         fontSize: 18,
