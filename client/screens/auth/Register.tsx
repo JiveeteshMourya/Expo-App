@@ -75,7 +75,7 @@ const Register = ({navigation}: RegisterProps) => {
         Already Registered? &nbsp;
         <Text 
             style={styles.link} 
-            onPress={() => navigation.navigate('Login')}
+            onPress={() => navigation.replace('Login')}
         >
             Login
         </Text>

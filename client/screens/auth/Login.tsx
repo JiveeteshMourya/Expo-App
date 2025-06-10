@@ -73,7 +73,7 @@ const Login = ({navigation}: LoginProps) => {
         New User? &nbsp;
         <Text 
             style={styles.link} 
-            onPress={() => navigation.navigate('Register')}
+            onPress={() => navigation.replace('Register')}
         >
             Register
         </Text>
