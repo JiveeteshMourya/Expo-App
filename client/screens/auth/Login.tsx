@@ -1,16 +1,23 @@
 import { Alert, StyleSheet, Text, View } from 'react-native';
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import InputBox from '@/components/forms/InputBox';
 import SubmitButton from '@/components/forms/SubmitButton';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { AuthContext } from '@/context/authContext';
 
 interface LoginProps {
     navigation: any,
 }
 
 const Login = ({navigation}: LoginProps) => {
+    const context = useContext(AuthContext);
+    if (!context) {
+        throw new Error("Auth context must be used within AuthProvider");
+    }
+    const { setState } = context;
+
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(false);
@@ -23,9 +30,11 @@ const Login = ({navigation}: LoginProps) => {
                 setLoading(false);
                 return;
             }
-            const {data} = await axios.post('http://192.168.1.10:8080/api/v1/auth/login', {email, password}); // replace "localhost" with your ip address when using emulator (ek hi device se req aur us se hi res nhi hota)
+            const {data} = await axios.post('/auth/login', {email, password}); // replace "localhost" with your ip address when using emulator (ek hi device se req aur us se hi res nhi hota)
+            setState(data);
             await AsyncStorage.setItem("@auth", JSON.stringify(data));
             Alert.alert(data && data.message);
+            navigation.replace('Home');
             console.log("Login Data => ", {email, password});
             setLoading(false);
         } catch(err: any) {
@@ -36,11 +45,11 @@ const Login = ({navigation}: LoginProps) => {
     }
     
     // temp function to check local storage data
-    const getLocalStorageData = async () => {
-        let data = await AsyncStorage.getItem('@auth');
-        console.log('Local Storage => ', data);
-    };
-    getLocalStorageData();
+    // const getLocalStorageData = async () => {
+    //     let data = await AsyncStorage.getItem('@auth');
+    //     console.log('Local Storage => ', data);
+    // };
+    // getLocalStorageData();
 
   return (
     <SafeAreaView style={styles.container}>

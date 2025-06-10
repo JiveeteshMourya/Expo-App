@@ -23,9 +23,10 @@ const Register = ({navigation}: RegisterProps) => {
                 setLoading(false);
                 return;
             }
-            const {data} = await axios.post('http://192.168.1.10:8080/api/v1/auth/register', {name, email, password}); // replace "localhost" with your ip address (ek hi device se req aur us se hi res nhi hota)
+            const {data} = await axios.post('/auth/register', {name, email, password}); // replace "localhost" with your ip address (ek hi device se req aur us se hi res nhi hota)
             await AsyncStorage.setItem("@auth", JSON.stringify(data));
             Alert.alert(data && data.message);
+            navigation.replace("Login");
             console.log("Register Data => ", {name, email, password});
             setLoading(false);
         } catch(err: any) {
