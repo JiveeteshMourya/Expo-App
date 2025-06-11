@@ -12,7 +12,6 @@ const Home = () => {
     const { state } = context;
   return (
     <View style={styles.container}>
-      <Text>Home</Text>
       <Text>{JSON.stringify(state, null, 4)}</Text>
       <FooterMenu/>
     </View>
@@ -26,5 +25,6 @@ const styles = StyleSheet.create({
     flex:1,
     justifyContent: "space-around",
     padding: 10,
+    marginTop: 10,
   }
 });
